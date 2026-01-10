@@ -44,36 +44,36 @@ typedef struct imas_t {
 
 /* Executes a read from memory */
 void memory_read(imas_t *imas) {
-    (*imas).mbr = (*imas).memory[(*imas).mar];
+    (*imas).mbr = (*imas).memory[(*imas).mar]; //!
 }
 
 /* Executes a write into memory */
 void memory_write(imas_t *imas, bool modify_address) {
-	if(modify_address) {
-		uint16_t temp1 = (*imas).memory[(*imas).mar];
-        uint16_t opCode = temp1 & 0xF000;
-        uint16_t endereco = (*imas).ac & 0x0FFF;
+	if(modify_address) {								//!
+		uint16_t temp1 = (*imas).memory[(*imas).mar];   //!
+        uint16_t opCode = temp1 & 0xF000;				//!
+        uint16_t endereco = (*imas).ac & 0x0FFF;		//!
 
-        uint16_t temp2 = opCode | endereco;
+        uint16_t temp2 = opCode | endereco;				//!
 
-        (*imas).mbr = temp2;
-        (*imas).memory[(*imas).mar] = temp2;
+        (*imas).mbr = temp2;							//!
+        (*imas).memory[(*imas).mar] = temp2;			//!
 	}
 	else {
-		(*imas).mbr = (*imas).ac;
-        (*imas).memory[(*imas).mar] = (*imas).ac;
+		(*imas).mbr = (*imas).ac;						//!
+        (*imas).memory[(*imas).mar] = (*imas).ac;		//!
 	}
 }
 
 /* Reads an integer from user */
 void io_read(imas_t *imas) {
     //printf("IN => ");
-	scanf("%hd", &(*imas).ac); 
+	scanf("%hd", &(*imas).ac); 							//!
 }
 
 /* Outputs an integer to user */
 void io_write(imas_t *imas) {
-	printf("%hd\n", (*imas).ac);
+	printf("%hd\n", (*imas).ac);						//!
 }
 
 int main(void) {
@@ -107,109 +107,109 @@ int main(void) {
 		uint16_t original_pc = imas.pc;
 
 		/* Fetch subcycle */
-		imas.mar = imas.pc;
-	    memory_read(&imas);
-	    imas.pc++;
+		imas.mar = imas.pc;								//!
+	    memory_read(&imas);								//!
+	    imas.pc++;										//!
 
 
 		/* Decode subcycle */
-		uint16_t temp3 = imas.mbr;
-	    imas.ir = temp3 >> 12;
-	    imas.ibr = temp3;
+		uint16_t temp3 = imas.mbr;						//!
+	    imas.ir = temp3 >> 12;							//!
+	    imas.ibr = temp3;								//!
 
 		/* Execute subcycle */
 		switch(imas.ir) {
 		case IMAS_HALT:
-			imas_halt = true;
+			imas_halt = true;							//!
 			
 			break;
 		case IMAS_LOAD_M:
-			imas.mar = imas.ibr & 0x0FFF;
-            memory_read(&imas);
-            imas.ac = imas.mbr;
+			imas.mar = imas.ibr & 0x0FFF;				//!
+            memory_read(&imas);							//!
+            imas.ac = imas.mbr;							//!
             
 			break;
 		case IMAS_LOAD_MQ:
-			imas.ac = imas.mq;
+			imas.ac = imas.mq;							//!
 			
 			break;
 		case IMAS_LOAD_MQ_M:
-			 imas.mar = imas.ibr & 0x0FFF;
-            memory_read(&imas);
-            imas.mq = imas.mbr;
+			 imas.mar = imas.ibr & 0x0FFF;				//!
+            memory_read(&imas);							//!
+            imas.mq = imas.mbr;							//!
             
 			break;
 		case IMAS_STOR_M:
-			imas.mar = imas.ibr & 0x0FFF;
-            memory_write(&imas, false);
+			imas.mar = imas.ibr & 0x0FFF;				//!
+            memory_write(&imas, false);					//!
             
 			break;
 		case IMAS_STA_M:
-			imas.mar = imas.ibr & 0x0FFF;
-            memory_write(&imas, true);
+			imas.mar = imas.ibr & 0x0FFF;				//!
+            memory_write(&imas, true);					//!
             
 			break;
 		case IMAS_ADD_M:
-			imas.mar = imas.ibr & 0x0FFF;
-            memory_read(&imas);
-            imas.ac += imas.mbr;
+			imas.mar = imas.ibr & 0x0FFF;				//!
+            memory_read(&imas);							//!
+            imas.ac += imas.mbr;						//!
             
 			break;
 		case IMAS_SUB_M:
-			imas.mar = imas.ibr & 0x0FFF;
-            memory_read(&imas);
-            imas.ac-= imas.mbr;
+			imas.mar = imas.ibr & 0x0FFF;				//!
+            memory_read(&imas);							//!
+            imas.ac-= imas.mbr;							//!
             
 			break;
 		case IMAS_MUL_M:
-			 imas.mar = imas.ibr & 0x0FFF;
-             memory_read(&imas); 
+			 imas.mar = imas.ibr & 0x0FFF;				//!
+             memory_read(&imas); 						//!
              
-             uint32_t result = imas.mq* imas.mbr;
-             imas.ac = result  >> 16;
-             imas.mq = result & 0xFFFF;
+             uint32_t result = imas.mq* imas.mbr;		//!
+             imas.ac = result  >> 16;					//!
+             imas.mq = result & 0xFFFF;					//!
              
 			break;
 		case IMAS_DIV_M:
-			imas.mar = imas.ibr & 0X0FFF;
-            memory_read(&imas);
-            if(imas.mbr != 0){
-                imas.mq = imas.ac/ imas.mbr;
-                imas.ac = imas.ac % imas.mbr;
-            }
-              else{
-                imas_halt = true;
-            }
+			imas.mar = imas.ibr & 0X0FFF;				//!
+            memory_read(&imas);							//!
+            if(imas.mbr != 0){							//!
+                imas.mq = imas.ac/ imas.mbr;			//!
+                imas.ac = imas.ac % imas.mbr;			//!
+            }											//!
+              else{										//!
+                imas_halt = true;						//!
+            }											//!
 			break;
 		case IMAS_JMP_M:
-			imas.mar = imas.ibr & 0x0FFF;
-            imas.pc = imas.mar;
+			imas.mar = imas.ibr & 0x0FFF;				//!
+            imas.pc = imas.mar;							//!
             
 			break;
 		case IMAS_JZ_M:
-			 if(imas.ac == 0){
-                imas.mar = imas.ibr & 0x0FFF;
-                imas.pc = imas.mar;
-            }
+			 if(imas.ac == 0){							//!
+                imas.mar = imas.ibr & 0x0FFF;			//!
+                imas.pc = imas.mar;						//!
+            }											//!
 			break;
 		case IMAS_JNZ_M:
-			  if(imas.ac != 0){
-                imas.mar = imas.ibr & 0x0FFF;
-                imas.pc = imas.mar;
-            }
+			  if(imas.ac != 0){							//!
+                imas.mar = imas.ibr & 0x0FFF;			//!
+                imas.pc = imas.mar;						//!
+            }											//!
 			break;
 		case IMAS_JPOS_M:
-			  if(imas.ac >= 0){
-                imas.mar = imas.ibr & 0x0FFF;
-                imas.pc = imas.mar;
-            }
+			  if(imas.ac >= 0){							//!
+                imas.mar = imas.ibr & 0x0FFF;			//!
+                imas.pc = imas.mar;						//!
+            }											//!
 			break;
 		case IMAS_IN:
-			io_read(&imas);
+			io_read(&imas);								//!
 			
 			break;
 		case IMAS_OUT:
-			io_write(&imas);
+			io_write(&imas);							//!
 			
 			break;
 		default:
