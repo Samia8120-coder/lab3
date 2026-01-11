@@ -1,3 +1,4 @@
+//Sâmia Feitosa Silva e Kayky Martins de Lima
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -54,8 +55,9 @@ void memory_read(imas_t *imas) {
 		// TODO: Write only operand address field -------------
 		//4bits opcode | 12bits endereço
 		uint16_t og_val = imas->memory[imas->mar];
-		uint16_t adds_val = imas->mbr & 0x0FFF;
-		imas->memory[imas->mar] = (og_val & 0xF000) | adds_val;
+		uint16_t adds_val = (imas->ac) & 0x0FFF;
+		uint16_t sec_val = (og_val & 0xF000) | adds_val;
+		imas->memory[imas->mar] = sec_val;
 	}
 	else {
 		// TODO -------------------
@@ -65,15 +67,15 @@ void memory_read(imas_t *imas) {
 
 /* Reads an integer from user */
 void io_read(imas_t *imas) {
-	printf("IN => "); 
+	//printf("IN => "); 
 	// TODO: scanf("%hd", &<?>); --------
-	scanf("%hd", &imas->mbr);
+	scanf("%hd", &imas->ac);
 }
 
 /* Outputs an integer to user */
 void io_write(imas_t *imas) {
 	// TODO: printf("OUT => %hd\n", <?>);-------
-	printf("OUT => %hd\n", imas->mbr); 
+	printf("%hd\n", imas->ac); 
 }
 
 int main(int argc, char *argv[]) {
@@ -82,7 +84,8 @@ int main(int argc, char *argv[]) {
 	/* Set breakpoints */
 	bool breakpoints[IMAS_MEM_SIZE] = {false};
 	for(int i = 0; i < x; i++) {
-		int address = strtol(argv[i], NULL, 16);
+		int address = 0;
+		scanf("%d", &address);
 		breakpoints[address] = true;
 	}
 	
@@ -95,6 +98,7 @@ int main(int argc, char *argv[]) {
 	/* Fill IMAS memory */
         uint16_t address, buffer;
     while(scanf("%hX %hX%*[^\n]", &address, &buffer) == 2) {
+		if(address == 0 && buffer == 0) break;
 		imas.memory[address] = buffer;
     }
 
@@ -109,7 +113,7 @@ int main(int argc, char *argv[]) {
 		imas.mar = imas.pc;		//pc -> mar
 		memory_read(&imas);		//le o mar
 		imas.pc++;				//incrementa pc
-		imas.ibr = imas.mbr & 0x0FFF;	//pega a instrucao
+		imas.ibr = imas.mbr;	//pega a instrucao
 
 
 		/* Decode subcycle */
@@ -145,7 +149,7 @@ int main(int argc, char *argv[]) {
 		case IMAS_STA_M:
 			// TODO-------------------
 			imas.mbr = imas.ac;
-			memory_write(&imas, false);
+			memory_write(&imas, true);
 			break;
 		case IMAS_ADD_M:
 			// TODO-------------------
@@ -169,8 +173,8 @@ int main(int argc, char *argv[]) {
 			// TODO-------------------
 			memory_read(&imas);
 			if(imas.mbr != 0){
-				imas.mq = imas.mq / imas.mbr;
-				imas.mq = imas.mq % imas.mbr;
+				imas.mq = imas.ac / imas.mbr;
+				imas.ac = imas.ac % imas.mbr;
 			}
 			break;
 		case IMAS_JMP_M:
@@ -220,3 +224,4 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+	
